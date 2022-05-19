@@ -40,13 +40,21 @@ python setup.py install
 ```python
 >>> from fasttld import FastTLDExtract
 >>> t = FastTLDExtract()
->>> res = t.extract("https://some-user@a.long.subdomain.ox.ac.uk:5000/a/b/c/d/e/f/g/h/i?id=42")
->>> scheme, userinfo, subdomain, domain, suffix, port, path, domain_name = res
->>> scheme, userinfo, subdomain, domain, suffix, port, path, domain_name
-('https://', 'some-user', 'a.long.subdomain', 'ox', 'ac.uk', '5000', 'a/b/c/d/e/f/g/h/i?id=42', 'ox.ac.uk')
+>>> res = t.extract("www.google.com")
+>>> res
+('www', 'google', 'com', 'google.com')
+>>> subdomain, domain, suffix, domain_name = res
+>>> subdomain
+'www'
+>>> domain
+'google'
+>>> suffix
+'com'
+>>> domain_name
+'google.com'
 ```
 
-extract() returns a tuple `(scheme, userinfo, subdomain, domain, suffix, port, path, domain_name)` .
+extract() returns a tuple `(subdomain, domain, suffix, domain_name)` .
 
 ## Update the Mozilla Public Suffix List local copy
 
@@ -64,9 +72,6 @@ or
 >>> from fasttld import FastTLDExtract
 >>> FastTLDExtract().update()
 ```
-
-This option can be disabled setting the environment flag `FASTTLD_NO_AUTO_UPDATE` to `1`.
-
 
 ## Specify Mozilla Public Suffix List file
 
@@ -95,9 +100,9 @@ By default, **fasttld** treats private domains as TLDs (i.e. `exclude_private_su
 ```python
 >>> from fasttld import FastTLDExtract
 >>> FastTLDExtract(exclude_private_suffix=False).extract('news.blogspot.co.uk')
->>> ('', '', '', 'news', 'blogspot.co.uk', '', '', 'news.blogspot.co.uk') # blogspot.co.uk is treated as a TLD
+>>> ('', 'news', 'blogspot.co.uk', 'news.blogspot.co.uk') # blogspot.co.uk is treated as a TLD
 >>> FastTLDExtract().extract('news.blogspot.co.uk')  # this is the default behaviour
->>> ('', '', '', 'news', 'blogspot.co.uk', '', '', 'news.blogspot.co.uk') # same output as above
+>>> ('', 'news', 'blogspot.co.uk', 'news.blogspot.co.uk') # same output as above
 ```
 
 You can instruct **fasttld** to exclude private domains by setting `exclude_private_suffix=True`
@@ -105,7 +110,7 @@ You can instruct **fasttld** to exclude private domains by setting `exclude_priv
 ```python
 >>> from fasttld import FastTLDExtract
 >>> FastTLDExtract(exclude_private_suffix=True).extract('news.blogspot.co.uk') # set exclude_private_suffix=True
->>> ('', '', 'news', 'blogspot', 'co.uk', '', '', 'blogspot.co.uk') # notice that co.uk is now recognised as the TLD instead of blogspot.co.uk
+>>> ('news', 'blogspot', 'co.uk', 'blogspot.co.uk') # notice that co.uk is now recognised as the TLD instead of blogspot.co.uk
 ```
 
 ## Speed Comparison
